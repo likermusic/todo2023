@@ -1,0 +1,56 @@
+body, * {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Montserrat;
+}
+body {
+  background: url(https://catherineasquithgallery.com/uploads/posts/2021-02/1614261196_35-p-fon-chernii-granzh-71.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+}
+.wrapper {
+  backdrop-filter: blur;
+}
+.header span {
+  font-weight: 600;
+}
+.header label {
+  font-weight: 600;
+  opacity: .7;
+  transition: .3s;
+}
+.header label:hover {
+  opacity: 1;
+}
+.filter input, .add input, .filter input:focus, .add input:focus {
+  background-color: transparent;
+  color: #fff;
+}
+.filter input:focus, .add input:focus {
+  box-shadow: none;
+  border: 1px solid #fff;
+}
+.filter input::placeholder, .add input::placeholder{
+  color: #fff;
+  opacity: .7;
+}
+.menu-wrap li {
+  background-color: transparent;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+}
+.btn-actions a {
+  text-decoration: none;
+}
+.btn-actions a i {
+  transition: .3s;
+}
+.btn-actions a:hover i {
+  opacity: .7;
+}
+.btn-add:hover {
+  background-color: #fff !important;
+}
