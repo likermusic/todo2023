@@ -10,8 +10,20 @@ body {
   background-size: cover;
   height: 100vh;
 }
+.container .main {
+  height: 100vh;
+}
 .wrapper {
-  backdrop-filter: blur;
+  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, .08);
+  box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
+}
+.header h1 {
+  /* -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(#fff 0%, #c97900); */
+  color: #c97900;
+  font-weight: 600;
 }
 .header span {
   font-weight: 600;
@@ -36,21 +48,110 @@ body {
   color: #fff;
   opacity: .7;
 }
+
+.menu-wrap {
+  max-height: 250px;
+  overflow: auto;
+  padding: 2px 8px 2px 1px;
+}
+.menu-wrap::-webkit-scrollbar {
+  width: 8px;
+}
+.menu-wrap::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, .3);
+  border-radius: 4px;
+}
+.menu-wrap::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-image: linear-gradient(180deg,rgba(0, 0, 0, .15) 0%, rgba(255, 255, 255, .7) 90%);
+}
 .menu-wrap li {
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, .08);
   color: #fff;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: .5rem 1rem;
+  box-shadow: 0px 0px 3px rgba(255, 255, 255, .4);
+  position: relative;
+  overflow: hidden;
+}
+.menu-wrap li:not(:nth-of-type(1)) {
+  margin-top: 14px;
+}
+.menu-wrap li:after {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -110px;
+  background-color: whitesmoke;
+  width: 30px;
+  height: 100px;
+  transition: .8s cubic-bezier(.25,.1,.25,1);
+  transform: rotate(35deg);
+  filter: blur(35px);
+}
+.menu-wrap li:hover::after {
+  left: 130%;
+}
+.menu-wrap li span {
+  max-width: 320px;
 }
 .btn-actions a {
   text-decoration: none;
+  transition: .3s;
 }
 .btn-actions a i {
   transition: .3s;
+  border-radius: 50%;
+}
+.btn-important i {
+  color: #c97900;
+  position: relative;
+  bottom: 3px;
+}
+.btn-delete i {
+  color: red;
 }
 .btn-actions a:hover i {
-  opacity: .7;
+  opacity: .8;
+}
+.btn-add {
+  box-shadow: none !important;
+  background-color: #c97900;
+  border: none;
+}
+.btn-add:focus {
+  background-color: #c97900 !important;
+  border: none;
 }
 .btn-add:hover {
-  background-color: #fff !important;
+  background-color: #c97900 !important;
+  border: none;
+}
+.add-inp-wrap {
+  position: relative;
+  width: 100%;
+}
+.cross {
+  position: absolute;
+  top: 53%;
+  right: 10px;
+  transform: translateY(-50%);
+  text-decoration: none;
+  color: #fff;
+  opacity: 0;
+  visibility: hidden;
+  transition: .3s;
+  cursor: pointer;
+}
+.cross-active {
+  opacity: .7;
+  visibility: visible;
+}
+.cross i {
+  font-size: 18px;
+}
+.cross-active:hover {
+  opacity: 1;
 }
