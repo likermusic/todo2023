@@ -19,10 +19,10 @@ body {
   box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
 }
 .header h1 {
-  /* -webkit-background-clip: text;
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(#fff 0%, #c97900); */
-  color: #c97900;
+  background-image: linear-gradient(#fff 0%, #c97900);
+  /* color: #c97900; */
   font-weight: 600;
 }
 .header span {
