@@ -22,7 +22,7 @@ function showCross() {
 }
 
 function addItemToLS(name, source, params = null) {
-  let items = JSON.parse(localStorage.getItem(source)) || [];
+  let items = getItemsFromLS(source);
 
   let newItem;
 
@@ -38,9 +38,20 @@ function addItemToLS(name, source, params = null) {
   localStorage.setItem(source, JSON.stringify(items));
 }
 
-document.querySelector('.btn-add').addEventListener('click', function(event) {
+function getItemsFromLS(key) {
+
+  return JSON.parse(localStorage.getItem(key)) || [];
+
+}
+
+
+document.querySelector('.btn-add').addEventListener('click', (event) => {
   const input = event.target.parentElement.querySelector('.add input');
-  const li = `<li class="rounded">
+
+  const tasks = getItemsFromLS('tasks');
+  const id = tasks[tasks.length - 1].id + 1;
+
+  const li = `<li class="rounded" data-id = "${id}">
     <span>${input.value}</span>
     <div class="btn-actions">
       <a href="" class="text-white btn-important me-1 d-inline-block">
@@ -52,17 +63,16 @@ document.querySelector('.btn-add').addEventListener('click', function(event) {
     </div>
   </li>`;
 
-  if (addInput.value.trim()) { 
+  if (addInput.value.trim()) {
     addItemToLS(input.value, 'tasks', { important: false, done: false });
 
     renderItem(li, '.list');
 
     clearInput(input);
   }
-
 });
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', (event) => {
   const input = event.target.parentElement.querySelector('.add input');
   const li = `<li class="rounded">
     <span>${input.value}</span>
@@ -90,5 +100,37 @@ addInput.addEventListener('input', showCross);
 document.querySelector('.cross').
 addEventListener("click", clearInput);
 
+document.addEventListener('DOMContentLoaded', () => {
+  const tasks = getItemsFromLS();
+
+  tasks.forEach((item) => {
+    const li = `<li class="rounded" data-id = ${item.id}>
+    <span>${item.name}</span>
+    <div class="btn-actions">
+      <a href="" class="text-white btn-important me-1 d-inline-block">
+        <i class="bi bi-patch-exclamation fs-5"></i>
+      </a>
+      <a href="" class="text-white btn-delete">
+        <i class="bi bi-x fs-3"></i>
+      </a>
+    </div>
+  </li>`;
+
+  renderItem(li, '.list');
+  });
+});
+
+document.querySelector('.list').addEventListener('click', (e) => {
+  if (e.target.matches('span')) {
+    const tasks = getItemsFromLS('tasks');
+
+    tasks.forEach((item, ind) => {
+      if (e.target.parentElement.dataset.id == item.id) {
+        console.log('item')
+      }
+    });
 
 
+    e.target.classList.toggle('done');
+  }
+});

@@ -96,6 +96,7 @@ body {
 }
 .menu-wrap li span {
   max-width: 320px;
+  cursor: pointer;
 }
 .btn-actions a {
   text-decoration: none;
@@ -154,4 +155,8 @@ body {
 }
 .cross-active:hover {
   opacity: 1;
+}
+
+.done {
+  text-decoration: line-through;
 }
