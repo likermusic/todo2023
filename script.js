@@ -1,5 +1,6 @@
 const cross = document.querySelector('.cross');
 const addInput = document.querySelector('.add input');
+// let idCounter;
 
 function renderItem(markup, outputClass) {
 
@@ -25,13 +26,11 @@ function addItemToLS(name, source, params = null) {
   let items = getItemsFromLS(source);
 
   let newItem;
-  let id;
+  let id = setId();
 
   if (items.length == 0) {
-    id = 1;
     newItem = { id, name, ...params };
   } else {
-    id = items[items.length - 1].id + 1;
     newItem = { id, name, ...params };
   }
 
@@ -75,34 +74,47 @@ function actionAfterClickBtnAdd(event) {
   }
 }
 
+function getId() {
+  return localStorage.getItem('idCounter') || 0;
+}
+
+function setId() {
+  let idCounter = +getId();
+  idCounter++;
+
+  localStorage.setItem('idCounter', idCounter);
+
+  return idCounter;
+}
+
 document.querySelector('.btn-add').addEventListener('click', actionAfterClickBtnAdd);
 
-document.addEventListener('keydown', (event) => {
-  const input = event.target.parentElement.querySelector('.add input');
+// document.addEventListener('keydown', (event) => {
+//   const input = event.target.parentElement.querySelector('.add input');
 
-  const tasks = getItemsFromLS('tasks');
-  const id = tasks[tasks.length - 1].id + 1;
+//   const tasks = getItemsFromLS('tasks');
+//   const id = tasks[tasks.length - 1].id + 1;
 
-  const li = `<li class="rounded">
-    <span>${input.value}</span>
-    <div class="btn-actions">
-      <a href="" class="text-white btn-important me-1 d-inline-block">
-        <i class="bi bi-patch-exclamation fs-5"></i>
-      </a>
-      <a href="" class="text-white btn-delete">
-        <i class="bi bi-x fs-3"></i>
-      </a>
-    </div>
-  </li>`;
+//   const li = `<li class="rounded">
+//     <span>${input.value}</span>
+//     <div class="btn-actions">
+//       <a href="" class="text-white btn-important me-1 d-inline-block">
+//         <i class="bi bi-patch-exclamation fs-5"></i>
+//       </a>
+//       <a href="" class="text-white btn-delete">
+//         <i class="bi bi-x fs-3"></i>
+//       </a>
+//     </div>
+//   </li>`;
 
-  if ((event.keyCode == 13 || event.keyCode == 9) && addInput.value.trim()) {
-    addItemToLS(input.value, 'tasks', { important: false, done: false });
+//   if ((event.keyCode == 13 || event.keyCode == 9) && addInput.value.trim()) {
+//     addItemToLS(input.value, 'tasks', { important: false, done: false });
 
-    renderItem(li, '.list');
+//     renderItem(li, '.list');
 
-    clearInput(input);
-  }
-});
+//     clearInput(input);
+//   }
+// });
 
 addInput.addEventListener('input', showCross);
 
@@ -113,10 +125,12 @@ cross.addEventListener("click", (event) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // idCounter = getId();
+
   const tasks = getItemsFromLS('tasks');
 
   tasks.forEach((item) => {
-
     const li = `<li class="rounded" data-id = ${item.id}>
     <span class="${item.done == true ? 'done' : ''}">${item.name}</span>
     <div class="btn-actions">
