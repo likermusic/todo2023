@@ -1,7 +1,6 @@
 const cross = document.querySelector('.cross');
 const addInput = document.querySelector('.add input');
 // let idCounter;
-
 function renderItem(markup, outputClass) {
 
   document.querySelector(outputClass).insertAdjacentHTML('beforeend', markup);
@@ -126,13 +125,11 @@ cross.addEventListener("click", (event) => {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // idCounter = getId();
-
   const tasks = getItemsFromLS('tasks');
 
   tasks.forEach((item) => {
     const li = `<li class="rounded" data-id = ${item.id}>
-    <span class="${item.done == true ? 'done' : ''}">${item.name}</span>
+    <span class="${item.done == true ? 'done' : ''} ${item.important == true ? 'important' : ''}">${item.name}</span>
     <div class="btn-actions">
       <a href="" class="text-white btn-important me-1 d-inline-block">
         <i class="bi bi-patch-exclamation fs-5"></i>
@@ -148,16 +145,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.querySelector('.list').addEventListener('click', (e) => {
-  if (e.target.matches('span')) {
+  e.preventDefault();
+
+  function modifyItemData(param) {
+
     const tasks = getItemsFromLS('tasks');
 
     tasks.forEach((item, ind) => {
-      if (e.target.parentElement.dataset.id == item.id) {
-        item.done = !item.done;
+      if (e.target.closest('li').dataset.id == item.id) {
+        item[param] = !item[param];
       }
     });
-    localStorage.setItem('tasks', JSON.stringify(tasks));
 
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+  if (e.target.matches('span')) {
     e.target.classList.toggle('done');
+
+    modifyItemData('done');
+  } 
+
+  if (e.target.matches('.btn-important, .btn-important > i')) {
+    e.target.closest('li').querySelector('span').classList.toggle('important');
+
+    modifyItemData('important');
   }
 });
