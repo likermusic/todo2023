@@ -25,17 +25,20 @@ function addItemToLS(name, source, params = null) {
   let items = getItemsFromLS(source);
 
   let newItem;
+  let id;
 
   if (items.length == 0) {
-    newItem = { id: 1, name, ...params };
+    id = 1;
+    newItem = { id, name, ...params };
   } else {
-    const id = items[items.length - 1].id + 1;
+    id = items[items.length - 1].id + 1;
     newItem = { id, name, ...params };
   }
 
   items.push(newItem);
 
   localStorage.setItem(source, JSON.stringify(items));
+  return id;
 }
 
 function getItemsFromLS(key) {
@@ -44,8 +47,7 @@ function getItemsFromLS(key) {
 
 }
 
-
-document.querySelector('.btn-add').addEventListener('click', (event) => {
+function actionAfterClickBtnAdd(event) {
   const input = event.target.parentElement.querySelector('.add input');
 
   const tasks = getItemsFromLS('tasks');
@@ -64,16 +66,23 @@ document.querySelector('.btn-add').addEventListener('click', (event) => {
   </li>`;
 
   if (addInput.value.trim()) {
+    // let id = addItemToLS(input.value, 'tasks', { important: false, done: false });
     addItemToLS(input.value, 'tasks', { important: false, done: false });
 
     renderItem(li, '.list');
 
     clearInput(input);
   }
-});
+}
+
+document.querySelector('.btn-add').addEventListener('click', actionAfterClickBtnAdd);
 
 document.addEventListener('keydown', (event) => {
   const input = event.target.parentElement.querySelector('.add input');
+
+  const tasks = getItemsFromLS('tasks');
+  const id = tasks[tasks.length - 1].id + 1;
+
   const li = `<li class="rounded">
     <span>${input.value}</span>
     <div class="btn-actions">
@@ -97,15 +106,19 @@ document.addEventListener('keydown', (event) => {
 
 addInput.addEventListener('input', showCross);
 
-document.querySelector('.cross').
-addEventListener("click", clearInput);
+cross.addEventListener("click", (event) => {
+  const input = addInput;
+
+  clearInput(input);
+});
 
 document.addEventListener('DOMContentLoaded', () => {
-  const tasks = getItemsFromLS();
+  const tasks = getItemsFromLS('tasks');
 
   tasks.forEach((item) => {
+
     const li = `<li class="rounded" data-id = ${item.id}>
-    <span>${item.name}</span>
+    <span class="${item.done == true ? 'done' : ''}">${item.name}</span>
     <div class="btn-actions">
       <a href="" class="text-white btn-important me-1 d-inline-block">
         <i class="bi bi-patch-exclamation fs-5"></i>
@@ -126,10 +139,10 @@ document.querySelector('.list').addEventListener('click', (e) => {
 
     tasks.forEach((item, ind) => {
       if (e.target.parentElement.dataset.id == item.id) {
-        console.log('item')
+        item.done = !item.done;
       }
     });
-
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 
     e.target.classList.toggle('done');
   }
