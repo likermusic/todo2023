@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ToDo List</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  
+
+
   <div class="container">
 
     <div class="main d-flex justify-content-center align-items-center">
@@ -26,28 +31,33 @@
         <div class="header d-flex justify-content-between">
           <h1>Todo app</h1>
           <div class="info d-flex column-gap-3 align-items-center">
-  
+
             <div class="lead lead1">
-              <span id="active">0</span>
+              <span id="active"></span>
               <label for="" class="label-active">active</label>
             </div>
             <span class="lead-hr"></span>
             <div class="lead">
-              <span id="done">0</span>
+              <span id="done"></span>
               <label for="" class="label-done">done</label>
             </div>
-  
+
           </div>
         </div>
 
         <div class="filter d-flex justify-content-between column-gap-5">
-          <input type="text" class="form-control" placeholder="Search...">
+          <div class="filter-inp-wrap position-relative">
+            <a class="cross filter-cross">
+              <i class="bi bi-x"></i>
+            </a>
+            <input type="text" class="form-control filter-input" placeholder="Search...">
+          </div>
 
 
           <div class="btn-group" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-outline-light btn-light text-dark fw-bold">All</button>
-            <button type="button" class="btn btn-outline-light">Active</button>
-            <button type="button" class="btn btn-outline-light">Done</button>
+            <button type="button" class="btn filter-all btn-outline-light btn-light text-dark fw-bold">All</button>
+            <button type="button" class="btn filter-active btn-outline-light">Active</button>
+            <button type="button" class="btn filter-done btn-outline-light">Done</button>
           </div>
         </div>
 
@@ -57,15 +67,15 @@
         </div>
 
         <div class="add d-flex justify-content-between column-gap-5">
-            <div class="add-inp-wrap">
-              <input type="text" class="form-control" placeholder="Enter task name...">
-              <a class="cross">
-                <i class="bi bi-x"></i>
-              </a>
-            </div>
-  
-            <button class="btn btn-light btn-add fw-bold">Add</button>
-         
+          <div class="add-inp-wrap">
+            <a class="cross add-cross">
+              <i class="bi bi-x"></i>
+            </a>
+            <input type="text" class="form-control" placeholder="Enter task name...">
+          </div>
+
+          <button class="btn btn-light btn-add fw-bold">Add</button>
+
         </div>
 
       </div>
@@ -74,7 +84,9 @@
 
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
 
   <script src="https://kit.fontawesome.com/bad7f7f5d4.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
@@ -83,4 +95,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>

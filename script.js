@@ -1,76 +1,76 @@
-const cross = document.querySelector('.cross');
 const addInput = document.querySelector('.add input');
-// let idCounter;
+const filterSearch = document.querySelector('.filter input');
+let tasks = getItemsFromLS('tasks');
+
+
 function renderItem(markup, outputClass) {
-
   document.querySelector(outputClass).insertAdjacentHTML('beforeend', markup);
-
 }
 
-function removeActiveCrossClass() {
-  cross.classList.remove('cross-active');
+function addActiveClass(markup) {
+  markup.classList.add('cross-active');
+}
+
+function removeActiveClass(markup) {
+  markup.classList.remove('cross-active');
 }
 
 function clearInput(input) {
   input.value = '';
-
-  removeActiveCrossClass();
 }
 
 function showCross() {
-  addInput.value.trim() ? cross.classList.add('cross-active') : removeActiveCrossClass();
+  const addCross = document.querySelector('.add-cross');
+  const filterCross = document.querySelector('.filter-cross');
+
+  addInput.value.trim() ? addActiveClass(addCross) : removeActiveClass(addCross);
+
+  filterSearch.value.trim() ? addActiveClass(filterCross) : removeActiveClass(filterCross);
 }
 
 function addItemToLS(name, source, params = null) {
-  let items = getItemsFromLS(source);
 
-  let newItem;
-  let id = setId();
+  try {
 
-  if (items.length == 0) {
-    newItem = { id, name, ...params };
-  } else {
-    newItem = { id, name, ...params };
+    let items = getItemsFromLS(source);
+
+    let newItem;
+    let id = setId();
+
+    if (items.length == 0) {
+      newItem = { id, name, ...params };
+    } else {
+      newItem = { id, name, ...params };
+    }
+
+    items.push(newItem);
+
+    localStorage.setItem(source, JSON.stringify(items));
+    return id;
+
+  } catch (error) {
+    return false;
   }
 
-  items.push(newItem);
+}
 
-  localStorage.setItem(source, JSON.stringify(items));
-  return id;
+function removeItemFromLS(id, source) {
+
+  const tasks = getItemsFromLS(source);
+
+  (tasks.length > 0) && tasks.forEach((item, ind) => {
+    if (item.id == id) {
+      tasks.splice(ind, 1);
+      return;
+    }
+  });
+
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+
 }
 
 function getItemsFromLS(key) {
-
   return JSON.parse(localStorage.getItem(key)) || [];
-
-}
-
-function actionAfterClickBtnAdd(event) {
-  const input = event.target.parentElement.querySelector('.add input');
-
-  const tasks = getItemsFromLS('tasks');
-  const id = tasks[tasks.length - 1].id + 1;
-
-  const li = `<li class="rounded" data-id = "${id}">
-    <span>${input.value}</span>
-    <div class="btn-actions">
-      <a href="" class="text-white btn-important me-1 d-inline-block">
-        <i class="bi bi-patch-exclamation fs-5"></i>
-      </a>
-      <a href="" class="text-white btn-delete">
-        <i class="bi bi-x fs-3"></i>
-      </a>
-    </div>
-  </li>`;
-
-  if (addInput.value.trim()) {
-    // let id = addItemToLS(input.value, 'tasks', { important: false, done: false });
-    addItemToLS(input.value, 'tasks', { important: false, done: false });
-
-    renderItem(li, '.list');
-
-    clearInput(input);
-  }
 }
 
 function getId() {
@@ -86,48 +86,125 @@ function setId() {
   return idCounter;
 }
 
-document.querySelector('.btn-add').addEventListener('click', actionAfterClickBtnAdd);
+function addItemToScreen() {
+  ['click', 'keydown'].forEach(eventName => {
+    document.addEventListener(eventName, (event) => {
+      const input = addInput;
 
-// document.addEventListener('keydown', (event) => {
-//   const input = event.target.parentElement.querySelector('.add input');
+      const tasks = getItemsFromLS('tasks');
 
-//   const tasks = getItemsFromLS('tasks');
-//   const id = tasks[tasks.length - 1].id + 1;
+      let id;
 
-//   const li = `<li class="rounded">
-//     <span>${input.value}</span>
-//     <div class="btn-actions">
-//       <a href="" class="text-white btn-important me-1 d-inline-block">
-//         <i class="bi bi-patch-exclamation fs-5"></i>
-//       </a>
-//       <a href="" class="text-white btn-delete">
-//         <i class="bi bi-x fs-3"></i>
-//       </a>
-//     </div>
-//   </li>`;
+      if (tasks.length == 0) {
+        id = 1;
+      } else {
+        id = tasks[tasks.length - 1].id + 1;
+      }
 
-//   if ((event.keyCode == 13 || event.keyCode == 9) && addInput.value.trim()) {
-//     addItemToLS(input.value, 'tasks', { important: false, done: false });
+      const li = `<li class="rounded" data-id = "${id}">
+      <span>${input.value}</span>
+      <div class="btn-actions">
+        <a href="" class="text-white btn-important me-1 d-inline-block">
+          <i class="bi bi-patch-exclamation fs-5"></i>
+        </a>
+        <a href="" class="text-white btn-delete">
+          <i class="bi bi-x fs-3"></i>
+        </a>
+      </div>
+    </li>`;
 
-//     renderItem(li, '.list');
+      if ((event.target.matches('.btn-add') && (addInput.value.trim())) || ((event.key === 'Enter' || event.key === 'Tab') && addInput.value.trim())) {
 
-//     clearInput(input);
-//   }
-// });
+        addItemToLS(input.value, 'tasks', { important: false, done: false });
 
-addInput.addEventListener('input', showCross);
+        renderItem(li, '.list');
 
-cross.addEventListener("click", (event) => {
-  const input = addInput;
+        const count = countParams('tasks');
+        renderParams(count);
 
-  clearInput(input);
+        clearInput(input);
+      }
+
+    });
+  });
+}
+
+function countParams(source, arr = null) {
+  const tasks = arr || getItemsFromLS(source);
+
+  if (tasks.length > 0) {
+    const countDone = tasks.reduce((acc, item) => {
+      return item.done ? ++acc : acc;
+    }, 0);
+
+    const countActive = tasks.length - countDone;
+
+    return { countDone, countActive };
+  } else {
+    return { countDone: 0, countActive: 0 };
+  }
+}
+
+function renderParams(count) {
+  document.querySelector('#done').textContent = count.countDone;
+
+  document.querySelector('#active').textContent = count.countActive;
+}
+
+function filterItems(items, type) {
+  switch (type) {
+    case 'all':
+      return items;
+      break;
+    case 'active':
+      return items.filter(function (item) {
+        return item.done !== true;
+      })
+      break;
+    case 'done':
+      return items.filter(function (item) {
+        return item.done == true;
+      })
+      break;
+  }
+}
+
+document.querySelector('.wrapper').addEventListener('input', (event) => {
+  if (event.target.matches('.add input, .filter input')) {
+    showCross();
+  }
+});
+
+document.querySelectorAll('.cross').forEach(elem => {
+  elem.addEventListener('click', (event) => {
+    const items = document.querySelectorAll('.list li');
+
+    if (event.target.matches('.cross')) {
+
+      clearInput(event.target.nextElementSibling);
+      removeActiveClass(event.target);
+
+    } else if (event.target.matches('.cross i')) {
+
+      clearInput(event.target.parentElement.nextElementSibling);
+      removeActiveClass(event.target.parentElement);
+
+    }
+
+    if (event.target.matches('.filter-cross, .filter-cross i')) {
+
+      items.forEach(elem => {
+        elem.hidden = false;
+      });
+
+    }
+  });
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-
   const tasks = getItemsFromLS('tasks');
 
-  tasks.forEach((item) => {
+  (tasks.length > 0) && tasks.forEach((item) => {
     const li = `<li class="rounded" data-id = ${item.id}>
     <span class="${item.done == true ? 'done' : ''} ${item.important == true ? 'important' : ''}">${item.name}</span>
     <div class="btn-actions">
@@ -140,8 +217,13 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </li>`;
 
-  renderItem(li, '.list');
+    renderItem(li, '.list');
   });
+
+  addItemToScreen();
+
+  const count = countParams('tasks'); // обьект
+  renderParams(count);
 });
 
 document.querySelector('.list').addEventListener('click', (e) => {
@@ -159,15 +241,111 @@ document.querySelector('.list').addEventListener('click', (e) => {
 
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }
+
   if (e.target.matches('span')) {
     e.target.classList.toggle('done');
 
     modifyItemData('done');
-  } 
+
+    const count = countParams('tasks'); // обьект
+    renderParams(count);
+  }
 
   if (e.target.matches('.btn-important, .btn-important > i')) {
     e.target.closest('li').querySelector('span').classList.toggle('important');
 
     modifyItemData('important');
   }
+
+  if (e.target.matches('.btn-delete, .btn-delete i')) {
+    const id = e.target.closest('li').dataset.id;
+
+    const isError = removeItemFromLS(id, 'tasks');
+
+    if (!isError) {
+      e.target.closest('li').remove();
+
+      const count = countParams('tasks'); // обьект
+      renderParams(count);
+    } else {
+      alert('Sorry, error');
+    }
+
+  }
 });
+
+
+document.querySelector('.filter-input').addEventListener('input', function (e) {
+  const value = e.target.value;
+  const tasksArr = tasks;
+  const filtered = tasksArr.filter(function (item) {
+    return item.name.toLowerCase().search(value.toLowerCase()) != -1
+  })
+
+  tasks = filtered; // сохранить в глоб перем tasks
+
+
+  const outputClass = '.list';
+  document.querySelector(outputClass).innerHTML = '';
+
+  filtered.forEach(function (item) {
+    const li = `<li class="rounded" data-id = "${item.id}">
+      <span class="${item.done == true ? 'done' : ''} ${item.important == true ? 'important' : ''}">${item.name}</span>
+      <div class="btn-actions">
+        <a href="" class="text-white btn-important me-1 d-inline-block">
+          <i class="bi bi-patch-exclamation fs-5"></i>
+        </a>
+        <a href="" class="text-white btn-delete">
+          <i class="bi bi-x fs-3"></i>
+        </a>
+      </div>
+    </li>`
+    renderItem(li, outputClass);
+  });
+
+  const obj = countParams(null, filtered);
+  renderParams(obj);
+
+})
+
+document.querySelector('.filter .btn-group').addEventListener('click', function (e) {
+  if (e.target.matches('.btn')) {
+    this.querySelector('.btn-light.text-dark.fw-bold').classList.remove('btn-light', 'text-dark', 'fw-bold');
+    e.target.classList.add('btn-light', 'text-dark', 'fw-bold');
+
+    let filtered;
+    if (e.target.classList.contains('filter-all')) {
+      filtered = filterItems(tasks, 'all');
+    } else if (e.target.classList.contains('filter-active')) {
+      filtered = filterItems(tasks, 'active');
+    } else if (e.target.classList.contains('filter-done')) {
+      filtered = filterItems(tasks, 'done');
+    }
+
+    tasks = filtered;
+    // 
+    const outputClass = '.list';
+    document.querySelector(outputClass).innerHTML = '';
+
+    filtered.forEach(function (item) {
+      const li = `<li class="rounded" data-id = "${item.id}">
+      <span class="${item.done == true ? 'done' : ''} ${item.important == true ? 'important' : ''}">${item.name}</span>
+      <div class="btn-actions">
+        <a href="" class="text-white btn-important me-1 d-inline-block">
+          <i class="bi bi-patch-exclamation fs-5"></i>
+        </a>
+        <a href="" class="text-white btn-delete">
+          <i class="bi bi-x fs-3"></i>
+        </a>
+      </div>
+    </li>`
+      renderItem(li, outputClass);
+    });
+
+    const obj = countParams(null, filtered);
+    renderParams(obj);
+    //
+  }
+})
+
+// btn-light text-dark fw-bold
