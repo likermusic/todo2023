@@ -1,7 +1,9 @@
 const addInput = document.querySelector('.add input');
 const filterSearch = document.querySelector('.filter input');
-let tasks = getItemsFromLS('tasks');
-
+let filterParams = {
+  search: '',
+  state: 'all'
+}
 
 function renderItem(markup, outputClass) {
   document.querySelector(outputClass).insertAdjacentHTML('beforeend', markup);
@@ -151,19 +153,21 @@ function renderParams(count) {
   document.querySelector('#active').textContent = count.countActive;
 }
 
-function filterItems(items, type) {
-  switch (type) {
+function filterItems(items) {
+  switch (filterParams.state) {
     case 'all':
-      return items;
+      return items.filter(function (item) {
+        return item.name.toLowerCase().search(filterParams.search.toLowerCase()) != -1
+      })
       break;
     case 'active':
       return items.filter(function (item) {
-        return item.done !== true;
+        return item.name.toLowerCase().search(filterParams.search.toLowerCase()) != -1 && item.done !== true;
       })
       break;
     case 'done':
       return items.filter(function (item) {
-        return item.done == true;
+        return item.name.toLowerCase().search(filterParams.search.toLowerCase()) != -1 && item.done == true;
       })
       break;
   }
@@ -191,13 +195,38 @@ document.querySelectorAll('.cross').forEach(elem => {
 
     }
 
-    if (event.target.matches('.filter-cross, .filter-cross i')) {
+    const value = filterParams.search = '';
+  const tasks = getItemsFromLS('tasks');
+  const filtered = filterItems(tasks);
 
-      items.forEach(elem => {
-        elem.hidden = false;
-      });
+  const outputClass = '.list';
+  document.querySelector(outputClass).innerHTML = '';
 
-    }
+  filtered.forEach(function (item) {
+    const li = `<li class="rounded" data-id = "${item.id}">
+      <span class="${item.done == true ? 'done' : ''} ${item.important == true ? 'important' : ''}">${item.name}</span>
+      <div class="btn-actions">
+        <a href="" class="text-white btn-important me-1 d-inline-block">
+          <i class="bi bi-patch-exclamation fs-5"></i>
+        </a>
+        <a href="" class="text-white btn-delete">
+          <i class="bi bi-x fs-3"></i>
+        </a>
+      </div>
+    </li>`
+    renderItem(li, outputClass);
+  });
+
+  const obj = countParams(null, filtered);
+  renderParams(obj);
+
+    // if (event.target.matches('.filter-cross, .filter-cross i')) {
+
+    //   items.forEach(elem => {
+    //     elem.hidden = false;
+    //   });
+
+    // }
   });
 });
 
@@ -276,14 +305,9 @@ document.querySelector('.list').addEventListener('click', (e) => {
 
 
 document.querySelector('.filter-input').addEventListener('input', function (e) {
-  const value = e.target.value;
-  const tasksArr = tasks;
-  const filtered = tasksArr.filter(function (item) {
-    return item.name.toLowerCase().search(value.toLowerCase()) != -1
-  })
-
-  tasks = filtered; // сохранить в глоб перем tasks
-
+  const value = filterParams.search = e.target.value;
+  const tasks = getItemsFromLS('tasks');
+  const filtered = filterItems(tasks);
 
   const outputClass = '.list';
   document.querySelector(outputClass).innerHTML = '';
@@ -314,16 +338,18 @@ document.querySelector('.filter .btn-group').addEventListener('click', function 
     e.target.classList.add('btn-light', 'text-dark', 'fw-bold');
 
     let filtered;
+    const tasks = getItemsFromLS('tasks');
     if (e.target.classList.contains('filter-all')) {
-      filtered = filterItems(tasks, 'all');
+      filterParams.state = 'all';
+      filtered = filterItems(tasks);
     } else if (e.target.classList.contains('filter-active')) {
-      filtered = filterItems(tasks, 'active');
+      filterParams.state = 'active';
+      filtered = filterItems(tasks);
     } else if (e.target.classList.contains('filter-done')) {
-      filtered = filterItems(tasks, 'done');
+      filterParams.state = 'done';
+      filtered = filterItems(tasks);
     }
 
-    tasks = filtered;
-    // 
     const outputClass = '.list';
     document.querySelector(outputClass).innerHTML = '';
 
